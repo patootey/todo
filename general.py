@@ -1,29 +1,25 @@
-import tkinter as tk  # Importerer tkinter-biblioteket for GUI
-from PIL import Image, ImageTk  # Importerer moduler for bildebehandling
+from tkinter import ttk
+from PIL import Image, ImageTk
 
 
-# Definisjon av klassen 'Button' for opprettelse av knapper
 class Button:
-    def __init__(self, root, text="", colour="white", command="boolean"):
-        self.colour = colour  # Bakgrunnsfarge for knappen
-        self.text = text  # Teksten som vises på knappen
-        self.command = command  # Funksjonen som skal kalles når knappen trykkes
-        self.clicked = False  # Status for om knappen er trykket
-        self.create_button(root)  # Oppretter knappen i GUI-en
+    def __init__(self, root, text="", command=None):
+        self.text = text
+        self.command = command
+        self.clicked = False
+        self.create_button(root)
 
     def click(self):
         if self.command:
-            self.command()  # Kaller den angitte funksjonen når knappen trykkes
-        self.clicked = True if self.clicked == False else False  # Endrer trykkstatusen
+            self.command()
+        self.clicked = not self.clicked
 
     def create_button(self, root):
-        self.button = tk.Button(
-            root, text=self.text, bg=self.colour, command=self.click
-        )  # Oppretter knappen med tekst og farge
-        self.button.pack()  # Legger knappen til i GUI-en
+        self.button = ttk.Button(root, text=self.text, command=self.click)
+        self.button.pack()
+        self.button.config(style=".TButton")
 
 
-# Definisjon av klassen 'Photo' for opprettelse av bildekomponenter
 class Photo:
     def __init__(
         self,
@@ -34,43 +30,36 @@ class Photo:
         position=(0, 0),
         button="<Button-1>",
     ):
-        self.image_path = image_path  # Filbanen til bildet
-        self.size = size  # Størrelsen på bildet
-        self.position = position  # Posisjonen til bildet i GUI-en
-        self.bind = bind  # Funksjonen som skal kalles når bildet klikkes
-        self.button = button  # Knappen som brukes til å aktivere klikk-handling
-        self.image = None  # Variabel for bildet
-        self.label = None  # Variabel for etiketten som viser bildet
-        self.create_image(root)  # Oppretter bildet i GUI-en
+        self.image_path = image_path
+        self.size = size
+        self.position = position
+        self.bind = bind
+        self.button = button
+        self.image = None
+        self.label = None
+        self.create_image(root)
 
     def create_image(self, root):
-        photo = Image.open(self.image_path)  # Åpner bildet fra fil
-        photo = photo.resize(self.size, Image.ADAPTIVE)  # Justerer størrelsen på bildet
-        self.image = ImageTk.PhotoImage(
-            photo
-        )  # Konverterer bildet til PhotoImage-format
-        self.label = tk.Label(root, image=self.image)  # Oppretter en etikett med bildet
+        photo = Image.open(self.image_path)
+        photo = photo.resize(self.size, Image.ADAPTIVE)
+        self.image = ImageTk.PhotoImage(photo)
+        self.label = ttk.Label(root, image=self.image)
 
         if self.bind is not None:
-            # Binder klikk-handling til bildet hvis en funksjon er angitt
             self.label.bind(self.button, lambda event: self.bind())
 
-        self.label.place(
-            x=self.position[0], y=self.position[1]
-        )  # Plasserer etiketten i GUI-en
+        self.label.place(x=self.position[0], y=self.position[1])
 
 
-prevpage = []  # En liste for å lagre tidligere visningskomponenter
+prevpage = []
 
 
-# Funksjon for å fjerne alle komponenter unntatt de som er spesifikt angitt i 'page'
 def clear_window(root, page=[]):
     for widget in root.winfo_children():
         if widget not in page and widget not in savedWidgets and widget not in prevpage:
             widget.destroy()
 
 
-# Funksjon for å lagre nåværende visningskomponenter
 def keep_page(root):
     page = []
     for widget in root.winfo_children():
@@ -80,7 +69,6 @@ def keep_page(root):
     return page
 
 
-# Funksjon for å laste inn tidligere visningskomponenter i 'page'
 def load_page(root, page):
     if page is not None:
         clear_window(root, page=page)
@@ -88,17 +76,15 @@ def load_page(root, page):
             widget.pack()
 
 
-savedWidgets = []  # En liste for å lagre tidligere opprettede komponenter
+savedWidgets = []
 
 
-# Funksjon for å lagre en enkelt widget i 'savedWidgets'
 def save_widget(widget):
     global savedWidgets
     savedWidgets.append(widget)
 
 
-# Funksjon for å lese eksisterende navn fra en fil
-def read_existing_names(file="import_elever.txt"):
+def read_existing_names(file):
     existing_names = []
     try:
         with open(file, "r") as my_file:
@@ -108,15 +94,13 @@ def read_existing_names(file="import_elever.txt"):
     return existing_names
 
 
-# Funksjon for å slette det valgte navnet fra Listbox og filen
 def delete_selected_name(name_listbox, file: str):
-    selected_index = name_listbox.curselection()  # Få indeksen til det valgte elementet
+    selected_index = name_listbox.curselection()
     if selected_index:
-        index = int(selected_index[0])  # Konverter indeksen til en integer
-        name_to_delete = name_listbox.get(index)  # Få navnet som skal slettes
-        name_listbox.delete(index)  # Fjern det valgte elementet fra Listbox
+        index = int(selected_index[0])
+        name_to_delete = name_listbox.get(index)
+        name_listbox.delete(index)
 
-        # Fjern det slettede navnet fra filen
         with open(file, "r") as my_file:
             lines = my_file.readlines()
         with open(file, "w") as my_file:
