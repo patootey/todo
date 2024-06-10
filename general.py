@@ -98,10 +98,10 @@ def save_widget(widget):
 
 
 # Funksjon for å lese eksisterende navn fra en fil
-def read_existing_names():
+def read_existing_names(file="import_elever.txt"):
     existing_names = []
     try:
-        with open("import_elever.txt", "r") as my_file:
+        with open(file, "r") as my_file:
             existing_names = my_file.read().splitlines()
     except FileNotFoundError:
         pass

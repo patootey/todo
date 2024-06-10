@@ -29,9 +29,7 @@ else:
 
 class TodoApp:
     def __init__(self, root) -> None:
-        self.window = tk.Tk()
-        self.title = window.title("Lag en todo liste")
-        self.size = window.geometry("400x300")
+        self.root = root
 
     def tasks(self, root, file):
         prevpage = keep_page(root)  # Lagrer nåværende side
@@ -55,20 +53,21 @@ class TodoApp:
         scrollbar.config(command=name_listbox.yview)
 
         # Fyller Listbox med eksisterende navn fra filen
-        existing_names = read_existing_names()
+        existing_names = read_existing_names(file)
         for name in existing_names:
             name_listbox.insert(tk.END, name)
 
         # Funksjon for å legge til et navn i Listbox og filen
         def write_file():
             name = name_entry.get()
-            with open(file, "a") as my_file:
-                my_file.write(name + "\n")
+            if name:  # Sjekk at navnet ikke er tomt
+                with open(file, "a") as my_file:
+                    my_file.write(name + "\n")
 
-            name_entry.delete(0, tk.END)  # Fjerner det som står i tekstboksen
+                name_entry.delete(0, tk.END)  # Fjerner det som står i tekstboksen
 
-            # Oppdaterer Listbox med det nye navnet
-            name_listbox.insert(tk.END, name)
+                # Oppdaterer Listbox med det nye navnet
+                name_listbox.insert(tk.END, name)
 
         # Knapp for å legge til en elev
         tk.Button(frame, text="Legg til task", command=write_file, bg="blue").grid(
@@ -78,7 +77,7 @@ class TodoApp:
         delete_button = tk.Button(
             frame,
             text="Slett task",
-            command=lambda: delete_selected_name(name_listbox, "hello.txt"),
+            command=lambda: delete_selected_name(name_listbox, file),
             bg="red",
         )
         delete_button.grid(column=3, row=1)
@@ -99,7 +98,7 @@ def main(root):
     # Oppretter en 'Hjem'-knapp med et bilde og knytter den til hovedfunksjonen 'main'
     home_button = Photo(
         window,
-        "./images/home.png",
+        os.path.join(script_dir, "images/home.png"),
         size=(40, 40),
         position=(40, 0),
         bind=lambda: main(window),
@@ -107,7 +106,7 @@ def main(root):
     # Oppretter en 'Pil'-knapp med et bilde og knytter den til en funksjon 'ge.load_page'
     arrow_button = Photo(
         window,
-        "./images/left_arrow.png",
+        os.path.join(script_dir, "images/arrow.png"),
         size=(40, 40),
         bind=lambda: load_page(window, prevpage),
     )
