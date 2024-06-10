@@ -1,23 +1,34 @@
-from tkinter import ttk
+from tkinter import ttk, font
 from PIL import Image, ImageTk
 
 
 class Button:
-    def __init__(self, root, text="", command=None):
+    def __init__(self, root, text="", command=None, toggle_command=None):
         self.text = text
         self.command = command
+        self.toggle_command = toggle_command
         self.clicked = False
         self.create_button(root)
 
     def click(self):
         if self.command:
             self.command()
+        if self.toggle_command:
+            self.toggle_command()
         self.clicked = not self.clicked
+        self.update_style()
 
     def create_button(self, root):
         self.button = ttk.Button(root, text=self.text, command=self.click)
         self.button.pack()
-        self.button.config(style=".TButton")
+        self.update_style()
+
+    def update_style(self):
+        style = ttk.Style()
+        if self.clicked:
+            style.configure("TButton", font=("Helvetica", 12, "normal"))
+
+        self.button.config(style="TButton")
 
 
 class Photo:

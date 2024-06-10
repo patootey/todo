@@ -4,7 +4,6 @@ import tkinter as tk
 from tkinter import ttk
 import general
 
-
 window = tk.Tk()
 window.title("Lag en todo liste")
 window.geometry("400x300")
@@ -23,15 +22,15 @@ class TodoApp:
         general.prevpage = general.keep_page(root)
         frame = ttk.Frame(root)
 
-        ttk.Label(frame, text="Skriv inn en task: ").grid(column=1, row=0)
+        ttk.Label(frame, text="Skriv inn en task: ").grid(column=0, row=0)
         name_entry = ttk.Entry(frame)
-        name_entry.grid(column=2, row=0)
+        name_entry.grid(column=1, row=0)
 
         name_listbox = tk.Listbox(frame)
-        name_listbox.grid(column=3, row=0)
+        name_listbox.grid(column=1, row=1)
 
         scrollbar = ttk.Scrollbar(frame, orient="vertical")
-        scrollbar.grid(row=0, column=4, sticky=tk.NS)
+        scrollbar.grid(row=1, column=2, sticky=tk.NS)
 
         name_listbox.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=name_listbox.yview)
@@ -48,16 +47,35 @@ class TodoApp:
             name_entry.delete(0, tk.END)
             name_listbox.insert(tk.END, name)
 
-        ttk.Button(
-            frame, text="Legg til task", command=write_file, style="TButton"
-        ).grid(column=1, row=3)
+        def toggle_task():
+            selected_index = name_listbox.curselection()
+            if selected_index:
+                index = int(selected_index[0])
+                task_text = name_listbox.get(index)
+                if task_text.startswith("✓ "):
+                    new_text = task_text[2:]
+                else:
+                    new_text = "✓ " + task_text
+                name_listbox.delete(index)
+                name_listbox.insert(index, new_text)
+                name_listbox.selection_set(index)
+
+        add_button = ttk.Button(frame, text="Legg til task", command=write_file)
+        add_button.grid(column=0, row=2)
+
         delete_button = ttk.Button(
             frame,
             text="Slett task",
             command=lambda: general.delete_selected_name(name_listbox, file),
-            style="TButton",
         )
-        delete_button.grid(column=3, row=1)
+        delete_button.grid(column=1, row=2)
+
+        toggle_button = ttk.Button(
+            frame,
+            text="Veksle mellom status",
+            command=toggle_task,
+        )
+        toggle_button.grid(column=2, row=2)
 
         frame.place(y=70)
 
@@ -68,7 +86,6 @@ def main(root):
     general.Button(
         root, text="Opprett todo liste", command=lambda: app.tasks(root, "hello.txt")
     )
-    # completed_toggle_button = Button(root,text="Veksle mellom status", command=lambda: )
     general.Button(root, text="Avslutt", command=lambda: exit(root))
 
     home_button = general.Photo(
