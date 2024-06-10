@@ -2,6 +2,7 @@ from tkinter import ttk, font
 from PIL import Image, ImageTk
 
 
+# Klasse for å lage en knapp
 class Button:
     def __init__(self, root, text="", command=None, toggle_command=None):
         self.text = text
@@ -10,6 +11,7 @@ class Button:
         self.clicked = False
         self.create_button(root)
 
+    # Metode for å håndtere knappetrykk
     def click(self):
         if self.command:
             self.command()
@@ -18,19 +20,21 @@ class Button:
         self.clicked = not self.clicked
         self.update_style()
 
+    # Metode for å lage knappen
     def create_button(self, root):
         self.button = ttk.Button(root, text=self.text, command=self.click)
         self.button.pack()
         self.update_style()
 
+    # Metode for å oppdatere stilen på knappen
     def update_style(self):
         style = ttk.Style()
         if self.clicked:
             style.configure("TButton", font=("Helvetica", 12, "normal"))
-
         self.button.config(style="TButton")
 
 
+# Klasse for å vise et bilde
 class Photo:
     def __init__(
         self,
@@ -50,6 +54,7 @@ class Photo:
         self.label = None
         self.create_image(root)
 
+    # Metode for å lage og vise bildet
     def create_image(self, root):
         photo = Image.open(self.image_path)
         photo = photo.resize(self.size, Image.ADAPTIVE)
@@ -62,15 +67,18 @@ class Photo:
         self.label.place(x=self.position[0], y=self.position[1])
 
 
+# Liste for å holde styr på tidligere sider
 prevpage = []
 
 
+# Funksjon for å tømme vinduet
 def clear_window(root, page=[]):
     for widget in root.winfo_children():
         if widget not in page and widget not in savedWidgets and widget not in prevpage:
             widget.destroy()
 
 
+# Funksjon for å lagre gjeldende side
 def keep_page(root):
     page = []
     for widget in root.winfo_children():
@@ -80,6 +88,7 @@ def keep_page(root):
     return page
 
 
+# Funksjon for å laste en tidligere lagret side
 def load_page(root, page):
     if page is not None:
         clear_window(root, page=page)
@@ -87,14 +96,17 @@ def load_page(root, page):
             widget.pack()
 
 
+# Liste for å holde styr på lagrede widgets
 savedWidgets = []
 
 
+# Funksjon for å lagre en widget
 def save_widget(widget):
     global savedWidgets
     savedWidgets.append(widget)
 
 
+# Funksjon for å lese eksisterende navn fra en fil
 def read_existing_names(file):
     existing_names = []
     try:
@@ -105,6 +117,7 @@ def read_existing_names(file):
     return existing_names
 
 
+# Funksjon for å slette valgt navn fra listeboksen og filen
 def delete_selected_name(name_listbox, file: str):
     selected_index = name_listbox.curselection()
     if selected_index:
