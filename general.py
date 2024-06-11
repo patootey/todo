@@ -1,5 +1,5 @@
 from tkinter import ttk
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk  # type: ignore
 
 
 # Klasse for å lage en knapp
@@ -102,7 +102,7 @@ class Photo:
 
         if self.bind is not None:
             # Binder klikk-handling til bildet hvis en funksjon er angitt
-            self.label.bind(self.button, lambda event: self.bind())
+            self.label.bind(self.button, lambda event: self.bind())  # type: ignore
 
         self.label.place(x=self.position[0], y=self.position[1])
 

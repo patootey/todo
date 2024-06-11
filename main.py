@@ -10,6 +10,7 @@ window.title("Lag en oppgave liste")
 window.geometry("400x300")
 
 # Bestem script katalog basert på om programmet er frosset eller ikke (brukes for pyinstaller)
+# fil kjøre/åpnes uansett
 if getattr(sys, "frozen", False):
     script_dir = sys._MEIPASS  # type: ignore
 else:
@@ -17,8 +18,6 @@ else:
 
 
 # Klasse for Todo-applikasjonen
-
-
 class TodoApp:
     """
     Klasse for Todo-applikasjonen som håndterer opprettelse og visning av oppgavelister.
@@ -87,7 +86,7 @@ class TodoApp:
                 if task_text.startswith("✓ "):
                     new_text = task_text[2:]
                 else:
-                    new_text = "✓ " + task_text
+                    new_text = f"✓ {task_text}"
                 name_listbox.delete(index)
                 name_listbox.insert(index, new_text)
                 name_listbox.selection_set(index)
