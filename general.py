@@ -1,9 +1,19 @@
-from tkinter import ttk, font
+from tkinter import ttk
 from PIL import Image, ImageTk
 
 
 # Klasse for å lage en knapp
 class Button:
+    """
+    Klasse for å lage en knapp i en Tkinter-applikasjon.
+
+    Args:
+        root: Foreldrevinduet der knappen skal plasseres.
+        text: Teksten som skal vises på knappen.
+        command: Funksjonen som skal kjøres når knappen trykkes.
+        toggle_command: Funksjonen som skal kjøres når knappen trykkes for å veksle tilstanden.
+    """
+
     def __init__(self, root, text="", command=None, toggle_command=None):
         self.text = text
         self.command = command
@@ -11,8 +21,11 @@ class Button:
         self.clicked = False
         self.create_button(root)
 
-    # Metode for å håndtere knappetrykk
     def click(self):
+        """
+        Metode for å håndtere knappetrykk.
+        Kaller de tilknyttede kommandoene og oppdaterer knappens tilstand og stil.
+        """
         if self.command:
             self.command()
         if self.toggle_command:
@@ -20,22 +33,43 @@ class Button:
         self.clicked = not self.clicked
         self.update_style()
 
-    # Metode for å lage knappen
     def create_button(self, root):
+        """
+        Metode for å lage knappen og plassere den i vinduet.
+
+        Args:
+            root: Foreldrevinduet der knappen skal plasseres.
+        """
         self.button = ttk.Button(root, text=self.text, command=self.click)
         self.button.pack()
         self.update_style()
 
-    # Metode for å oppdatere stilen på knappen
     def update_style(self):
+        """
+        Metode for å oppdatere stilen på knappen basert på tilstanden.
+        """
         style = ttk.Style()
         if self.clicked:
+            style.configure("TButton", font=("Helvetica", 12, "normal"))
+        else:
             style.configure("TButton", font=("Helvetica", 12, "normal"))
         self.button.config(style="TButton")
 
 
 # Klasse for å vise et bilde
 class Photo:
+    """
+    Klasse for å vise et bilde i en Tkinter-applikasjon.
+
+    Args:
+        root: Foreldrevinduet der bildet skal vises.
+        image_path: Stien til bildet som skal vises.
+        size: Størrelsen på bildet (bredde, høyde).
+        bind: Funksjonen som skal bindes til en hendelse på bildet.
+        position: Posisjonen der bildet skal plasseres (x, y).
+        button: Hendelsen som skal bindes til bildet (standard er venstre museklikk).
+    """
+
     def __init__(
         self,
         root,
@@ -54,14 +88,20 @@ class Photo:
         self.label = None
         self.create_image(root)
 
-    # Metode for å lage og vise bildet
     def create_image(self, root):
+        """
+        Metode for å lage og vise bildet i vinduet.
+
+        Args:
+            root: Foreldrevinduet der bildet skal vises.
+        """
         photo = Image.open(self.image_path)
         photo = photo.resize(self.size, Image.ADAPTIVE)
         self.image = ImageTk.PhotoImage(photo)
         self.label = ttk.Label(root, image=self.image)
 
         if self.bind is not None:
+            # Binder klikk-handling til bildet hvis en funksjon er angitt
             self.label.bind(self.button, lambda event: self.bind())
 
         self.label.place(x=self.position[0], y=self.position[1])
